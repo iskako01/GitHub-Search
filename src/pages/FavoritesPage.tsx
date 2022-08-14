@@ -16,7 +16,10 @@ export const FavoritesPage = () => {
     <div className="pt-10 mx-auto h-screen max-w-[500px]">
       <h2 className="text-lg text-center font-bold">Favorites</h2>
       {favorites.map((favorit) => (
-        <div className="border py-3 px-5 rounded-md-2 hover:shadow-md hover:bg-slate-100 transition-all">
+        <div
+          key={favorit.id}
+          className="border py-3 px-5 rounded-md-2 hover:shadow-md hover:bg-slate-100 transition-all"
+        >
           <div className="border p-2">
             <h2 className="text-lg font-bold">{favorit.full_name}</h2>
             <p className="text-sm">

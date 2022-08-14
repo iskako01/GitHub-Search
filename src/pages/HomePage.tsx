@@ -2,35 +2,32 @@ import React, { useEffect, useState } from "react";
 import { RepoCard } from "../components/RepoCard";
 import { useDebounce } from "../hooks/debounce";
 import {
-  useSearchUserQuery,
+  useLazySearchUserQuery,
   useLazyGetUserReposQuery,
 } from "../store/github/github-api";
 
 export const HomePage = () => {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState("iskako01");
   const [dropdown, setDropdown] = useState(false);
   const debounced = useDebounce(search);
-  const {
-    isLoading,
-    isError,
-    data: users,
-  } = useSearchUserQuery(debounced, {
-    skip: debounced.length < 1,
-  });
+  const [fetchUsers, { isLoading, isError, data: users }] =
+    useLazySearchUserQuery();
   const [
     fetchRepos,
     { isLoading: reposLoading, isError: reposError, data: userRepos },
   ] = useLazyGetUserReposQuery();
 
-  const handleSearch = () => {};
+  const handleSearch = () => {
+    setDropdown(true);
+    fetchUsers(debounced);
+  };
   const handleUser = (username: string) => {
     fetchRepos(username);
     setDropdown(false);
   };
 
   useEffect(() => {
-    setDropdown(debounced.length > 3 && users?.length! > 0);
-    console.log(debounced);
+    setDropdown(users?.length! > 0);
   }, [debounced]);
 
   return (

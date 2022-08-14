@@ -1,6 +1,6 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import { useActions } from "../hooks/actions";
+import { useAppSelector } from "../hooks/redux";
 import { IRepos } from "../models/models";
 
 interface PropsType {
@@ -8,10 +8,19 @@ interface PropsType {
 }
 
 export const RepoCard: React.FC<PropsType> = ({ repo }) => {
-  const { addFavote } = useActions();
+  const { addFavote, removeFavote } = useActions();
+  const favorites = useAppSelector((state) => state.github.favorites);
+  const [isFavorite, setIsFavorite] = useState(favorites.includes(repo));
+  console.log(favorites);
 
   const addToFavorite = (repo: IRepos) => {
     addFavote(repo);
+    setIsFavorite(true);
+  };
+
+  const removeFromFavorite = (repo: IRepos) => {
+    removeFavote(repo);
+    setIsFavorite(false);
   };
 
   return (
@@ -28,12 +37,21 @@ export const RepoCard: React.FC<PropsType> = ({ repo }) => {
       </div>
 
       <div className="flex justify-between pt-2">
-        <button
-          className="py-2 px-4 bg-yellow-300 rounded hover:shadow-md transition-all"
-          onClick={() => addToFavorite(repo)}
-        >
-          Add to favorites
-        </button>
+        {!isFavorite ? (
+          <button
+            className="py-2 px-4 bg-yellow-300 rounded hover:shadow-md transition-all"
+            onClick={() => addToFavorite(repo)}
+          >
+            Add to favorites
+          </button>
+        ) : (
+          <button
+            className="py-2 px-4 bg-red-300 rounded hover:shadow-md transition-all"
+            onClick={() => removeFromFavorite(repo)}
+          >
+            Remove from favorites
+          </button>
+        )}
       </div>
     </div>
   );
